@@ -55,11 +55,19 @@ class SpeechToText:
                 f"(device={self.device}, compute={self.compute_type})"
             )
 
-            self._model = WhisperModel(
-                self.model_name,
-                device=self.device,
-                compute_type=self.compute_type,
-            )
+            try:
+                self._model = WhisperModel(
+                    self.model_name,
+                    device=self.device,
+                    compute_type=self.compute_type,
+                )
+            except Exception as w_err:
+                logger.warning(f"Failed to load Whisper with compute_type={self.compute_type} ({w_err}), falling back to float32...")
+                self._model = WhisperModel(
+                    self.model_name,
+                    device=self.device,
+                    compute_type="float32",
+                )
             self._initialized = True
             logger.info("✓ Faster-Whisper model loaded")
 
