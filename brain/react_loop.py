@@ -127,9 +127,9 @@ class ReActLoop:
                 if on_tool_result:
                     await on_tool_result(t_name, res)
 
-                # Truncate nicely with notice if exceeds 4000 chars
-                if len(res) > 4000:
-                    res_formatted = res[:4000] + "\n\n[...Output truncated for brevity...]"
+                # Truncate nicely to save tokens (1200 chars limit)
+                if len(res) > 1200:
+                    res_formatted = res[:1200] + "\n\n[...Output truncated to save tokens...]"
                 else:
                     res_formatted = res
 

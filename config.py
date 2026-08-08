@@ -63,8 +63,8 @@ KOKORO_VOICE = os.getenv("KOKORO_VOICE", "af_heart")
 PIPER_MODEL_PATH = os.getenv("PIPER_MODEL_PATH", "")
 
 # ===== Memory =====
-MAX_SHORT_TERM_MESSAGES = int(os.getenv("MAX_SHORT_TERM_MESSAGES", "20"))
-MEMORY_TOP_K = int(os.getenv("MEMORY_TOP_K", "5"))
+MAX_SHORT_TERM_MESSAGES = int(os.getenv("MAX_SHORT_TERM_MESSAGES", "6"))
+MEMORY_TOP_K = int(os.getenv("MEMORY_TOP_K", "3"))
 
 # ===== Safety =====
 ALLOWED_DIRECTORIES = os.getenv(
@@ -75,7 +75,7 @@ DANGEROUS_COMMANDS = [
     "rm -rf", "format", "del /f /s", "shutdown", "restart",
     "rmdir /s", "reg delete", "bcdedit", "diskpart"
 ]
-MAX_REACT_ITERATIONS = int(os.getenv("MAX_REACT_ITERATIONS", "5"))
+MAX_REACT_ITERATIONS = int(os.getenv("MAX_REACT_ITERATIONS", "3"))
 TOOL_EXECUTION_TIMEOUT = int(os.getenv("TOOL_EXECUTION_TIMEOUT", "30"))
 
 # ===== Activation =====

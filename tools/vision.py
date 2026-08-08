@@ -51,26 +51,36 @@ def take_screenshot(target: str = "full_screen") -> str:
 
 async def analyze_image(image_path: str, question: str = "") -> str:
     """
-    Analyze an image using Vision-capable LLM (Gemini 2.0 Flash or OpenAI-compatible Vision API).
+    Analyze an image using Vision-capable LLM (OpenRouter / Gemini / OpenAI).
     """
     try:
         path = Path(image_path).resolve()
         if not path.exists():
             return f"Error: Image not found: {image_path}"
 
-        # Read and encode image
-        with open(path, "rb") as f:
-            image_data = base64.b64encode(f.read()).decode("utf-8")
+        # Resize and compress image to save tokens & bandwidth
+        import io
+        from PIL import Image
 
-        # Determine MIME type
-        suffix = path.suffix.lower()
-        mime_map = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp"}
-        mime_type = mime_map.get(suffix, "image/png")
+        with Image.open(path) as img:
+            img = img.convert("RGB")
+            img.thumbnail((1024, 1024))
+            buf = io.BytesIO()
+            img.save(buf, format="JPEG", quality=80)
+            image_data = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+        mime_type = "image/jpeg"
 
         from openai import AsyncOpenAI
 
-        # Prefer Gemini for Vision as it natively supports image understanding
-        if config.GEMINI_API_KEY:
+        # Check available API keys (OpenRouter primary)
+        extra_headers = None
+        if config.OPENROUTER_API_KEY:
+            api_key = config.OPENROUTER_API_KEY
+            base_url = config.OPENROUTER_BASE_URL
+            model = config.OPENROUTER_MODEL
+            extra_headers = {"HTTP-Referer": "https://github.com/ev-agent", "X-Title": "E.V. Agent"}
+        elif config.GEMINI_API_KEY:
             api_key = config.GEMINI_API_KEY
             base_url = config.GEMINI_BASE_URL
             model = config.GEMINI_MODEL
@@ -86,10 +96,11 @@ async def analyze_image(image_path: str, question: str = "") -> str:
         client = AsyncOpenAI(
             api_key=api_key,
             base_url=base_url,
+            default_headers=extra_headers,
             timeout=15.0,
         )
 
-        prompt = question or "Describe this image in detail. If there is text, read it."
+        prompt = question or "Describe this image concisely. If there is text, read key parts."
 
         response = await client.chat.completions.create(
             model=model,
@@ -107,7 +118,7 @@ async def analyze_image(image_path: str, question: str = "") -> str:
                     ],
                 }
             ],
-            max_tokens=1024,
+            max_tokens=512,
         )
 
         return response.choices[0].message.content or "No analysis available."
