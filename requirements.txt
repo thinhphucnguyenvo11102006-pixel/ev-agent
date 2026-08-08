@@ -1,0 +1,34 @@
+# E.V. Agent — AI Personal Assistant
+# Inspired by E.V. from Spider-Man: Brand New Day (2026)
+
+# ===== Core =====
+faster-whisper>=1.1.0
+silero-vad>=5.1
+sounddevice>=0.5.0
+numpy>=1.24.0
+
+# ===== Brain (LLM) =====
+openai>=1.50.0
+
+# ===== Memory =====
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+
+# ===== TTS =====
+# kokoro>=0.7.0  # Optional: local TTS (requires Python <= 3.12 for prebuilt numpy 1.x wheels)
+edge-tts>=6.1.0
+
+# ===== Tools =====
+ddgs>=9.0.0
+duckduckgo-search>=6.0.0
+pyautogui>=0.9.54
+Pillow>=10.0.0
+mss>=9.0.0
+
+# ===== UI =====
+rich>=13.0.0
+keyboard>=0.13.5
+
+# ===== Utilities =====
+python-dotenv>=1.0.0
+aiofiles>=24.0.0
