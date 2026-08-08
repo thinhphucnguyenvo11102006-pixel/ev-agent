@@ -38,6 +38,8 @@ def execute_python(code: str) -> str:
             [sys.executable, str(tmp_file)],
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=config.TOOL_EXECUTION_TIMEOUT,
             cwd=str(config.PROJECT_ROOT),
         )

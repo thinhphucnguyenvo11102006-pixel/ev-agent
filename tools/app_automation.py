@@ -78,7 +78,10 @@ def _close_app(app_name: str) -> str:
     try:
         result = subprocess.run(
             ["taskkill", "/IM", f"{app_name}.exe", "/F"],
-            capture_output=True, text=True
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         if result.returncode == 0:
             return f"Closed {app_name}"
@@ -109,16 +112,22 @@ def _press_key(key: str) -> str:
 
 
 def _click(coords: str) -> str:
-    """Click at coordinates (x,y)."""
+    """Click at coordinates (x,y) or target location like 'center'."""
     import pyautogui
     
     try:
-        parts = coords.replace("(", "").replace(")", "").split(",")
-        x, y = int(parts[0].strip()), int(parts[1].strip())
+        clean_target = coords.strip().lower()
+        if clean_target in ("center", "middle"):
+            sw, sh = pyautogui.size()
+            x, y = sw // 2, sh // 2
+        else:
+            parts = coords.replace("(", "").replace(")", "").split(",")
+            x, y = int(parts[0].strip()), int(parts[1].strip())
+        
         pyautogui.click(x, y)
         return f"Clicked at ({x}, {y})"
     except (ValueError, IndexError):
-        return f"Error: Invalid coordinates '{coords}'. Expected format: 'x,y'"
+        return f"Error: Invalid coordinates '{coords}'. Expected format: 'x,y' or 'center'"
 
 
 def _move_mouse(coords: str) -> str:

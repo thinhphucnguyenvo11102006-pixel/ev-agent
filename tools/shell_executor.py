@@ -46,6 +46,8 @@ def execute_shell(command: str, shell: str = "powershell") -> str:
             cmd,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=config.TOOL_EXECUTION_TIMEOUT,
             cwd=str(config.PROJECT_ROOT),
         )
